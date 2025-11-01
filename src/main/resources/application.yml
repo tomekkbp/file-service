@@ -1,0 +1,15 @@
+server:
+  port: 8083
+
+spring:
+  profiles:
+    active: develop
+  datasource:
+    url: jdbc:postgresql:piggybank
+    driverClassName: org.postgresql.Driver
+    username:
+    password:
+
+storage:
+  - sourceFolder: "asdasd/asdasd/asdad"
+    destinationFolder: "asdasd/asdad/adasd"
