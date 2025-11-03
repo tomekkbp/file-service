@@ -9,6 +9,11 @@ spring:
     driverClassName: org.postgresql.Driver
     username:
     password:
+  jpa:
+    datasource-platform: org.hibernate.dialect.PostgreSQLDialect
+    show-sql: true
+    hibernate:
+      ddl-auto: update
 
 storage:
   fileGroups:
@@ -20,7 +25,7 @@ storage:
       allowedFileExtensions: ["xlsx"]
     RECEIPT_IMAGE:
       readingScheduleCron: "*/5 * * * * *"
-      sourceFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/source"
-      destinationFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/stored"
-      errorFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/errors"
+      sourceFolderPath: "/home/tomek/Documents/projects/storage/receipt_image/source"
+      destinationFolderPath: "/home/tomek/Documents/projects/storage/receipt_image/stored"
+      errorFolderPath: "/home/tomek/Documents/projects/storage/receipt_image/errors"
       allowedFileExtensions: [ "jpg", "jpeg", "png" ]
