@@ -11,5 +11,16 @@ spring:
     password:
 
 storage:
-  - sourceFolder: "asdasd/asdasd/asdad"
-    destinationFolder: "asdasd/asdad/adasd"
+  fileGroups:
+    RECEIPT_EXCEL:
+      readingScheduleCron: "*/5 * * * * *"
+      sourceFolderPath: "/home/tomek/Documents/projects/storage/receipt_excel/source"
+      destinationFolderPath: "/home/tomek/Documents/projects/storage/receipt_excel/stored"
+      errorFolderPath: "/home/tomek/Documents/projects/storage/receipt_excel/errors"
+      allowedFileExtensions: ["xlsx"]
+    RECEIPT_IMAGE:
+      readingScheduleCron: "*/5 * * * * *"
+      sourceFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/source"
+      destinationFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/stored"
+      errorFolderPath: "/home/tomek/Documents/projects/storage/receipt_images/errors"
+      allowedFileExtensions: [ "jpg", "jpeg", "png" ]
