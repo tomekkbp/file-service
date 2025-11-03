@@ -10,6 +10,8 @@ import pl.tb.fileservice.storage.config.FileStorageConfig;
 import pl.tb.fileservice.storage.config.enumerates.FileGroup;
 import pl.tb.fileservice.storage.exception.FileConnotBeMovedException;
 import pl.tb.fileservice.storage.exception.FileExtensionNotAllowedException;
+import pl.tb.fileservice.storage.repository.FileStorageRepository;
+import pl.tb.fileservice.storage.repository.entity.FileStorageEntity;
 
 import java.io.File;
 import java.io.IOException;
@@ -17,6 +19,7 @@ import java.net.URI;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 
@@ -26,6 +29,7 @@ import java.util.Objects;
 public class FileStorageService {
 
     private final FileStorageConfig fileStorageConfig;
+    private final FileStorageRepository fileStorageRepository;
 
     public void storeNewFiles(FileGroup fileGroup) {
 
@@ -40,7 +44,8 @@ public class FileStorageService {
 
             try {
 
-                var mimeType = Files.probeContentType(unstoredFile.toPath());
+                var unstoredFilePath = unstoredFile.toPath();
+                var mimeType = Files.probeContentType(unstoredFilePath);
                 var fileExtensionByMimeType = FileExtension.fromMimeType(mimeType);
                 var isExtensionAllowed = allowedFileExtensions.stream()
                         .anyMatch(fileExtension -> fileExtension.getMimeType().equals(mimeType));
@@ -50,9 +55,21 @@ public class FileStorageService {
                     throw new FileExtensionNotAllowedException(errorMessage);
                 }
 
-                var unstoredFilePath = unstoredFile.toPath();
                 var storedFilePath = prepareStoredFilePath(fileGroup, destinationFolderPath, fileExtensionByMimeType);
                 var movedFilePath = Files.move(unstoredFilePath, storedFilePath, StandardCopyOption.REPLACE_EXISTING);
+
+                var fileStorageEntity = new FileStorageEntity();
+                fileStorageEntity.setFileGroup(fileGroup);
+                fileStorageEntity.setOriginalName(unstoredFile.getName());
+                fileStorageEntity.setStoredName(movedFilePath.toFile().getName());
+                fileStorageEntity.setPath(movedFilePath.toUri().getPath());
+                fileStorageEntity.setFileExtension(fileExtensionByMimeType.getExtensionType());
+                fileStorageEntity.setMimeType(mimeType);
+                fileStorageEntity.setCreateDateTime(LocalDateTime.now());
+                fileStorageEntity.setCreateUser("tomek@tomek.pl");
+                fileStorageEntity.setIsDeleted(false);
+
+                fileStorageRepository.save(fileStorageEntity);
 
                 log.info("File ({}) STORED: {}", unstoredFile.getName(), movedFilePath.toUri());
 
