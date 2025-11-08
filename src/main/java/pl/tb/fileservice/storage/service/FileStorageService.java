@@ -6,6 +6,8 @@ import org.springframework.stereotype.Service;
 import pl.tb.fileservice.file.exception.FileExtensionByMimeTypeNotFoundException;
 import pl.tb.fileservice.file.utils.FileExtension;
 import pl.tb.fileservice.file.utils.FileUtils;
+import pl.tb.fileservice.kafka.message.FileStorageKafkaMessage;
+import pl.tb.fileservice.kafka.producer.FileStorageKafkaMessageProducer;
 import pl.tb.fileservice.storage.config.FileStorageConfig;
 import pl.tb.fileservice.storage.config.enumerates.FileGroup;
 import pl.tb.fileservice.storage.exception.FileConnotBeMovedException;
@@ -30,6 +32,7 @@ public class FileStorageService {
 
     private final FileStorageConfig fileStorageConfig;
     private final FileStorageRepository fileStorageRepository;
+    private final FileStorageKafkaMessageProducer kafkaMessageProducer;
 
     public void storeNewFiles(FileGroup fileGroup) {
 
@@ -70,6 +73,7 @@ public class FileStorageService {
                 fileStorageEntity.setIsDeleted(false);
 
                 fileStorageRepository.save(fileStorageEntity);
+                kafkaMessageProducer.send(fileGroup, new FileStorageKafkaMessage(fileGroup, movedFilePath.toUri().getPath(), false));
 
                 log.info("File ({}) STORED: {}", unstoredFile.getName(), movedFilePath.toUri());
 
