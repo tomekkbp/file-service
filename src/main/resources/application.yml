@@ -15,6 +15,12 @@ spring:
     hibernate:
       ddl-auto: update
 
+kafka:
+  bootstrapServerURL: 'localhost:29092'
+  topics:
+    receiptExcelFileStorageTopicName: "file-storage-service.receipt-excel.v1"
+    receiptImageFileStorageTopicName: "file-storage-service.receipt-image.v1"
+
 storage:
   fileGroups:
     RECEIPT_EXCEL:
